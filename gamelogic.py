@@ -1,0 +1,2 @@
+# Checklist:
+    # Speicherformat Kakuro
