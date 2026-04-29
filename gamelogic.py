@@ -28,7 +28,7 @@ class Kakuro:
                     length = length + 1
                 else:
                     break
-            #längezähler rechts mit forschleife
+            #längezähler rechts mit forloop
 
         if(direction == "down"):
             for j in range(len(self.contenty[0])-y):
@@ -36,7 +36,7 @@ class Kakuro:
                     length = length + 1
                 else:
                     break
-            #längezähler down mit forschleife
+            #längezähler down mit forloop
 
         return length
         
