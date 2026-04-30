@@ -39,6 +39,14 @@ class Kakuro:
             #längezähler down mit forloop
 
         return length
+
+    def layout(self):
+        #für ein Viertel des Kakuros ein nicht abgeschlossenes Muster generieren dann zweimal spiegeln um das ganze Feld zu füllen (Symmetrie ist cool)
+        xwidth = len(self.contentx)/2
+        yhight = len(self.contenty)/2
+        for i in range(xwidth):
+            None
+    #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
 k = Kakuro(10,10)
 k.bfill()
