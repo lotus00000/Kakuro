@@ -3,20 +3,18 @@ class Kakuro:
     def __init__(self, x, y, default_value=0):
         self.x = x
         self.y = y
-        self.contentx = [[default_value for _ in range(x)] for _ in range(y)]
-        self.contenty = [[default_value for _ in range(x)] for _ in range(y)]
+        self.contentx = [[default_value for _ in range(y)] for _ in range(x)]
+        self.contenty = [[default_value for _ in range(y)] for _ in range(x)]
     def bfill(Kakuro):
-        for i in range(Kakuro.x):
+        for i in range(len(Kakuro.contentx)):
             Kakuro.contentx[i][0] = "B"
-        for j in range(Kakuro.y):
-            Kakuro.contentx[0][j] = "B"   
-    #xplane
-        
-        for i in range(Kakuro.x):
-            Kakuro.contenty[i][0] = "B"
-        for j in range(Kakuro.y):
-            Kakuro.contenty[0][j] = "B"  
-    #yplane
+            Kakuro.contenty[i][0] = "B"  
+        for j in range(len(Kakuro.contenty)):
+            Kakuro.contentx[0][j] = "B"
+            Kakuro.contenty[0][j] = "B"     
+  
+         
+  
 
     def getrowlength(self ,direction , x, y):
         length = 0

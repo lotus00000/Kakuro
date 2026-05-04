@@ -13,54 +13,54 @@ def createKakuro(kakuro):
     HEIGHT = kakuro.y*GRIDSIZE
      
 
-def drawgrid(k):
+def drawgrid():
     
     for x in range(0, WIDTH, GRIDSIZE):
         for y in range(0, HEIGHT, GRIDSIZE):
             rect = pygame.Rect(x, y, GRIDSIZE, GRIDSIZE)
             pygame.draw.rect(screen, color, rect, 1)
-            drawvalue(k,x,y)
+            
 
-def drawvalue(kakuro, x, y):
-    xcon = kakuro.contentx[x//GRIDSIZE][y//GRIDSIZE]
-    ycon = kakuro.contenty[x//GRIDSIZE][y//GRIDSIZE]
-    if (xcon!=0 and xcon!="B" ):
-        text = font.render(f"{xcon}", True, color)                                                                   #vllt muss x,y // GRIDSIZE
-        screen.blit(text,(x+GRIDSIZE*0.75,y+GRIDSIZE*0.375))
-    if (ycon!=0 and ycon!="B"):
-        text = font.render(f"{ycon}", True, color)                                                                   #vllt muss x,y // GRIDSIZE
-        screen.blit(text,(x+GRIDSIZE*0.375,y+GRIDSIZE*0.75))
-    elif(xcon == 0 and ycon == 0):
-        rect = pygame.Rect(x+BORDER, y+BORDER, GRIDSIZE-2*BORDER, GRIDSIZE-2*BORDER)
-        pygame.draw.rect(screen, color, rect)
+def drawvalue(kakuro):
+    for x in range(len(kakuro.contentx)):
+        for y in range(len(kakuro.contentx[0])):
+            xcon = kakuro.contentx[x][y]
+            ycon = kakuro.contenty[x][y]
+            if (xcon!=0 and xcon!="B" ):
+                text = font.render(f"{xcon}", True, color)                                                                   #vllt muss x,y // GRIDSIZE
+                screen.blit(text,(x*GRIDSIZE + GRIDSIZE*0.75, y*GRIDSIZE + GRIDSIZE*0.325))
+            if (ycon!=0 and ycon!="B"):
+                text = font.render(f"{ycon}", True, color)                                                                   #vllt muss x,y // GRIDSIZE
+                screen.blit(text,(x*GRIDSIZE + GRIDSIZE*0.375, y*GRIDSIZE + GRIDSIZE*0.75))
+            elif(xcon == 0 and ycon == 0):
+                rect = pygame.Rect( x*GRIDSIZE + BORDER, y*GRIDSIZE + BORDER, GRIDSIZE - 2*BORDER, GRIDSIZE - 2*BORDER)
+                pygame.draw.rect(screen, color, rect)
 
 running = True
-k = Kakuro(10,10)
-#k.bfill()
-k.setcontentmanual([ #ChatGPT visualisierungbeispiel
- [0, 0, 23, 0, 0, 16, 0, 0, 0, 0],
- [0, 14, 0, 0, 0, 0, 0, 18, 0, 0],
- [0, 0, 0, 12, 0, 0, 25, 0, 0, 0],
- [9, 0, 0, 0, 0, 17, 0, 0, 0, 11],
- [0, 0, 20, 0, 0, 0, 0, 0, 13, 0],
- [0, 8, 0, 0, 0, 0, 19, 0, 0, 0],
- [0, 0, 0, 15, 0, 0, 0, 0, 0, 0],
- [0, 0, 22, 0, 0, 0, 0, 14, 0, 0],
- [10, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 18, 0, 0, 0, 21, 0]
-],
-[
- [0, 0, 0, 19, 0, 0, 13, 0, 0, 0],
- [0, 0, 17, 0, 0, 21, 0, 0, 0, 0],
- [12, 0, 0, 0, 0, 0, 0, 16, 0, 0],
- [0, 15, 0, 0, 0, 0, 0, 0, 20, 0],
- [0, 0, 0, 0, 14, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 18, 0, 0, 0, 0],
- [0, 11, 0, 0, 0, 0, 0, 0, 0, 17],
- [0, 0, 0, 13, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 22, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-])
+k = Kakuro(9,10)
+k.bfill()
+k.contentx[0][1] = 13
+k.contentx[0][2] = 10
+k.contentx[1][3] = 10
+k.contentx[2][4] = 26
+k.contentx[0][4] = "B"
+k.contentx[0][5] = 43
+k.contentx[0][6] = 15
+k.contentx[1][7] = 8
+k.contentx[0][8] = 8
+k.contentx[0][9] = 14
+k.contentx[5][1] = 6
+k.contentx[5][2] = 24
+k.contentx[5][3] = 17
+k.contentx[6][6] = 8
+k.contentx[5][7] = 14
+k.contentx[5][8] = 23
+k.contentx[5][9] = 6
+k.contentx[4][1] = "B"
+k.contentx[4][2] = "B"
+k.contentx[8][3] = "B"
+print(k.getrowlength("right",1,1))
+
 createKakuro(k)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 while running:
@@ -69,7 +69,8 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))  
-    drawgrid(k)
+    drawgrid()
+    drawvalue(k)
     pygame.display.flip()
 
 pygame.quit()
