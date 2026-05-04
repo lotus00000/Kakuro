@@ -1,6 +1,4 @@
-# Checklist:
-    # Speicherformat Kakuro
-    # Brute Force solver
+
 class Kakuro:
     def __init__(self, x, y, default_value=0):
         self.x = x
@@ -48,7 +46,7 @@ class Kakuro:
             None
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
-k = Kakuro(10,10)
-k.bfill()
-print(k.getrowlength("down",5,2))
-print(k.contentx)
+#k = Kakuro(10,10)
+#k.bfill()
+#print(k.getrowlength("down",5,2))
+#print(k.contentx)
