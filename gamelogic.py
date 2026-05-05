@@ -112,6 +112,7 @@ class Kakuro:
                             num_opt_best = num_opt
                             x_best = x
                             y_best = y
+                            if len(num_opt_best)==1:break
             
             return num_opt_best,x_best,y_best
     def bsp(k):
