@@ -59,6 +59,29 @@ k.contentx[5][9] = 6
 k.contentx[4][1] = "B"
 k.contentx[4][2] = "B"
 k.contentx[8][3] = "B"
+
+k.contenty[1][0] = 5
+k.contenty[2][0] = 12
+k.contenty[3][1] = 27
+k.contenty[6][0] = 32
+k.contenty[7][0] = 17
+k.contenty[8][0] = 11
+k.contenty[4][3] = 4
+k.contenty[5][3] = 17
+k.contenty[1][4] = 12
+k.contenty[2][4] = 35
+k.contenty[1][7] = 3
+k.contenty[3][6] = 6
+k.contenty[8][7] = 7
+k.contenty[8][4] = 5
+k.contenty[7][4] = 32
+k.contenty[6][6] = 20
+k.contenty[4][6] = "B"
+k.contenty[5][6] = "B"
+k.contenty[4][7] = "B"
+k.contenty[4][8] = "B"
+k.contenty[4][9] = "B"
+
 print(k.getrowlength("right",1,1))
 
 createKakuro(k)
