@@ -1,10 +1,21 @@
+from itertools import combinations
 
 
 
 
+def build_table():
+        table = {}
+        digits = range(1, 10)
 
+        for length in range(2, 10):
+            for combo in combinations(digits, length):
+                s = sum(combo)
+                key = (length, s)
+                table.setdefault(key, []).append(combo)
 
+        return table
 class Kakuro:
+    
     def __init__(self, x, y, default_value=0):
         self.x = x
         self.y = y
@@ -29,11 +40,13 @@ class Kakuro:
             if direction == "right":
                 while k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
                     x -= 1 
-                return k.contentx[x][y]
+                if k.contentx[x][y]=="B":return 0 
+                return k.contentx[x][y] 
             if direction == "down":
                 while k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
-                    y -= 1 
-                return k.contentx[x][y]
+                    y -= 1
+                if k.contenty[x][y]=="B":return 0 
+                return k.contenty[x][y]    
             
     def layout(self):
         #für ein Viertel des Kakuros ein nicht abgeschlossenes Muster generieren dann zweimal spiegeln um das ganze Feld zu füllen (Symmetrie ist cool)
@@ -61,7 +74,7 @@ class Kakuro:
 
 
         elif direction == "down" and k.contenty[x][y] == 0 and k.contentx[x][y] == 0:
-            while k.contenty[x][y-1] == 0 and k.contentx[x-1][y] == 0:
+            while k.contenty[x][y-1] == 0 and k.contentx[x][y-1] == 0:
                 y -= 1
                 print("step up")
             for i in range(k.y - y):
@@ -71,6 +84,36 @@ class Kakuro:
                     break
 
         return length
+    
+    
+
+    
+    
+    
+    def solver(k):
+            kombinationen = build_table()    
+            num_opt_best = {1,2,3,4,5,6,7,8,9}
+            
+            x_best = 0
+            y_best = 0
+            for x in range(k.x):
+                for y in range(k.y):
+                    num_opt = set()
+                    num_opt2 = set()
+                    if(k.contentx[x][y]==0 and k.contenty[x][y]==0 and 2<k.getrowvalue("right",x,y) and 0<k.getrowlength("right",x,y) and 2<k.getrowvalue("down",x,y) and 0<k.getrowlength("down",x,y)):
+                        for optionen in kombinationen[k.getrowlength("right",x,y), k.getrowvalue("right",x,y)]:
+                            for num in optionen:
+                                num_opt.add(num)
+                        for optionen in kombinationen[k.getrowlength("down",x,y), k.getrowvalue("down",x,y)]:
+                            for num in optionen:
+                                num_opt2.add(num)
+                        num_opt = num_opt.intersection(num_opt2)
+                        if len(num_opt_best)>len(num_opt) and len(num_opt) != 0:
+                            num_opt_best = num_opt
+                            x_best = x
+                            y_best = y
+            
+            return num_opt_best,x_best,y_best
     def bsp(k):
         k.contentx[0][1] = 13
         k.contentx[0][2] = 10

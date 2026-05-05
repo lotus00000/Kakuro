@@ -1,11 +1,13 @@
 from gamelogic import Kakuro
+
+
 import pygame
 pygame.init()
 fontsize = 25
 font = pygame.font.Font(None, fontsize)
 color = (255, 255, 255)
 GRIDSIZE = 75
-BORDER = 5 #maximal GRIDSIZE/2
+BORDER = 10 #maximal GRIDSIZE/2
 def createKakuro(kakuro):
     global WIDTH 
     WIDTH = kakuro.x*GRIDSIZE
@@ -39,9 +41,9 @@ def drawvalue(kakuro):
 running = True
 k = Kakuro(9,10)
 k.bsp()
-print(k.getrowlength("right",6,5))
-print(k.getrowvalue("right",6,5))
-
+options, x, y = k.solver()
+print(f"{options}is the best at ({x}|{y})")
+#print(k.getrowvalue("down",6,7))
 
 createKakuro(k)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
