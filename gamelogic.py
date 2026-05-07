@@ -21,6 +21,7 @@ class Kakuro:
         self.y = y
         self.contentx = [[default_value for _ in range(y)] for _ in range(x)]
         self.contenty = [[default_value for _ in range(y)] for _ in range(x)]
+        self.answers = [[default_value for _ in range(y)] for _ in range(x)]
 
     def bfill(Kakuro):
         for i in range(Kakuro.x):
@@ -115,8 +116,13 @@ class Kakuro:
                             if len(num_opt_best)==1:break
             
             return num_opt_best,x_best,y_best
+
+    def aussort(k):
+        None#Answers[[]] um nicht mehr mögliche Kombis auszusortieren wenn in einer kombi x,y nicht vorhanden sind dann rauslöschen folgende Schnittmenge ist präziser
+        #wenn Schnittmenge Reihe Ans set != reihe ans lösche dieses set
     def bsp(k):
         k.contentx[0][1] = 13
+        #k.answers[1][1]=4
         k.contentx[0][2] = 10
         k.contentx[1][3] = 10
         k.contentx[2][4] = 26

@@ -37,7 +37,24 @@ def drawvalue(kakuro):
             elif(xcon == 0 and ycon == 0):
                 rect = pygame.Rect( x*GRIDSIZE + BORDER, y*GRIDSIZE + BORDER, GRIDSIZE - 2*BORDER, GRIDSIZE - 2*BORDER)
                 pygame.draw.rect(screen, color, rect)
+                if k.answers[x][y]!=0:
+                    text = font.render(f"{k.answers[x][y]}", True, (0,0,0))                                                                   #vllt muss x,y // GRIDSIZE
+                    screen.blit(text,(x*GRIDSIZE + GRIDSIZE*0.375, y*GRIDSIZE + GRIDSIZE*0.375))
 
+
+
+
+def userinputs(k):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_SPACE:
+            print("1")
+            options, x, y = k.solver()
+
+            k.answers[x][y] = options
+
+            print(k.answers[x][y])
+            
+                
 running = True
 k = Kakuro(9,10)
 k.bsp()
@@ -55,6 +72,7 @@ while running:
     screen.fill((0, 0, 0))  
     drawgrid()
     drawvalue(k)
+    userinputs(k)
     pygame.display.flip()
     
 
