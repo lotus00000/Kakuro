@@ -43,22 +43,27 @@ def drawvalue(kakuro):
 
 
 
-
+ 
+justpressed = 0
 def userinputs(k):
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_SPACE:
-            print("1")
-            options, x, y = k.solver()
+    global justpressed
+    if justpressed == 1 and pygame.mouse.get_pressed()[0] == False:
+        justpressed = 0
+    if pygame.mouse.get_pressed()[0] == True and justpressed == 0:
+        justpressed = 1
+        print("1")
+        options, x, y = k.solverl1()
+        if len(options) > 1:
+            print(f"unsure because {options} is long")
+        k.answers[x][y] = next(iter(options))
 
-            k.answers[x][y] = options
-
-            print(k.answers[x][y])
+        print(k.answers[x][y])
             
                 
 running = True
 k = Kakuro(9,10)
 k.bsp()
-options, x, y = k.solver()
+options, x, y = k.solverl1()
 print(f"{options}is the best at ({x}|{y})")
 #print(k.getrowvalue("down",6,7))
 

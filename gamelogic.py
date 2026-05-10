@@ -1,5 +1,5 @@
 from itertools import combinations
-
+import copy
 
 
 
@@ -11,7 +11,7 @@ def build_table():
             for combo in combinations(digits, length):
                 s = sum(combo)
                 key = (length, s)
-                table.setdefault(key, []).append(combo)
+                table.setdefault(key, []).append(set(combo))
 
         return table
 class Kakuro:
@@ -66,7 +66,7 @@ class Kakuro:
         if direction == "right" and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
             while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
                 x -= 1
-                print("step left")
+                #print("step left")
             for i in range(k.x - x):
                 if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0:
                     length += 1
@@ -77,7 +77,7 @@ class Kakuro:
         elif direction == "down" and k.contenty[x][y] == 0 and k.contentx[x][y] == 0:
             while k.contenty[x][y-1] == 0 and k.contentx[x][y-1] == 0:
                 y -= 1
-                print("step up")
+                #print("step up")
             for i in range(k.y - y):
                 if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0:
                     length += 1
@@ -89,9 +89,43 @@ class Kakuro:
     
 
     
+    def refine(k, x, y, table):
+        
+        x_speicher, y_speicher = x, y
+        answers_x, answers_y = set(), set()
+        kombinationen_x, kombinationen_y = [], []
+        
+        while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+            x -= 1
+        for i in range(k.x - x):
+            if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0 and k.answers[x][y]!= 0:
+                answers_x.add(k.answers[x+i][y])
+            else: break
+        x = x_speicher
+
+        while k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+            y -= 1          
+        for i in range(k.y - y):
+            if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0 and k.answers[x][y]!= 0:
+                answers_y.add(k.answers[x][y+i])
+            else: break
+        y = y_speicher
+
+        for optionen in table[k.getrowlength("right",x,y), k.getrowvalue("right",x,y)]:
+            if answers_x.issubset(optionen):
+                opt = copy.deepcopy(optionen)                            
+                opt.difference_update(answers_x)                
+                kombinationen_x.append(opt)
+        
+        for optionen in table[k.getrowlength("down",x,y), k.getrowvalue("down",x,y)]:
+            if answers_y.issubset(optionen): 
+                opt_1 = copy.deepcopy(optionen)                                                   
+                opt_1.difference_update(answers_y)       
+                kombinationen_y.append(opt_1)
+        return kombinationen_x,kombinationen_y
     
     
-    def solver(k):
+    def solverl1(k):
             kombinationen = build_table()    
             num_opt_best = {1,2,3,4,5,6,7,8,9}
             
@@ -101,13 +135,18 @@ class Kakuro:
                 for y in range(k.y):
                     num_opt = set()
                     num_opt2 = set()
-                    if(k.contentx[x][y]==0 and k.contenty[x][y]==0 and 2<k.getrowvalue("right",x,y) and 0<k.getrowlength("right",x,y) and 2<k.getrowvalue("down",x,y) and 0<k.getrowlength("down",x,y)):
-                        for optionen in kombinationen[k.getrowlength("right",x,y), k.getrowvalue("right",x,y)]:
+                    
+                    if(k.answers[x][y]==0 and k.contentx[x][y]==0 and k.contenty[x][y]==0 and 2<k.getrowvalue("right",x,y) and 0<k.getrowlength("right",x,y) and 2<k.getrowvalue("down",x,y) and 0<k.getrowlength("down",x,y)):
+                        
+                        kombinationen_x, kombinationen_y = k.refine(x,y,kombinationen)
+                        for optionen in kombinationen_x:
                             for num in optionen:
                                 num_opt.add(num)
-                        for optionen in kombinationen[k.getrowlength("down",x,y), k.getrowvalue("down",x,y)]:
+                        
+                        for optionen in kombinationen_y:
                             for num in optionen:
                                 num_opt2.add(num)
+                        
                         num_opt = num_opt.intersection(num_opt2)
                         if len(num_opt_best)>len(num_opt) and len(num_opt) != 0:
                             num_opt_best = num_opt
@@ -115,11 +154,21 @@ class Kakuro:
                             y_best = y
                             if len(num_opt_best)==1:break
             
+            
             return num_opt_best,x_best,y_best
 
-    def aussort(k):
-        None#Answers[[]] um nicht mehr mögliche Kombis auszusortieren wenn in einer kombi x,y nicht vorhanden sind dann rauslöschen folgende Schnittmenge ist präziser
-        #wenn Schnittmenge Reihe Ans set != reihe ans lösche dieses set
+    
+
+
+
+
+
+
+
+
+
+    
+
     def bsp(k):
         k.contentx[0][1] = 13
         #k.answers[1][1]=4
@@ -165,6 +214,7 @@ class Kakuro:
         k.contenty[4][8] = "B"
         k.contenty[4][9] = "B"
         
+
 
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
