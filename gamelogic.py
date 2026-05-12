@@ -14,6 +14,7 @@ def build_table():
                 table.setdefault(key, []).append(set(combo))
 
         return table
+
 class Kakuro:
     
     def __init__(self, x, y, default_value=0):
@@ -98,7 +99,7 @@ class Kakuro:
         while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
             x -= 1
         for i in range(k.x - x):
-            if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0 and k.answers[x][y]!= 0:
+            if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0 and k.answers[x+i][y]!= 0:
                 answers_x.add(k.answers[x+i][y])
             else: break
         x = x_speicher
@@ -106,7 +107,7 @@ class Kakuro:
         while k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
             y -= 1          
         for i in range(k.y - y):
-            if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0 and k.answers[x][y]!= 0:
+            if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0 and k.answers[x][y+i]!= 0:
                 answers_y.add(k.answers[x][y+i])
             else: break
         y = y_speicher
@@ -124,6 +125,30 @@ class Kakuro:
                 kombinationen_y.append(opt_1)
         return kombinationen_x,kombinationen_y
     
+    def legal(k,x,y):
+        answers_speicher = set()
+        while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+            x -= 1
+        for i in range(k.x - x):
+            if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0:
+                if k.answers[x+i][y]!= 0:
+                    if len({k.answers[x+i][y]}.intersection(answers_speicher))!=0:#False=={k.answers[x+i][y]}.isdisjoint(answers_speicher):
+                        return False
+                    answers_speicher.add(k.answers[x+i][y])
+            else:break
+    
+        answers_speicher.clear()
+        while k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+            y -= 1          
+        for i in range(k.y - y):
+            
+            if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0:
+                if k.answers[x][y+i]!= 0:
+                    if len({k.answers[x][y+i]}.intersection(answers_speicher))!=0:#False=={k.answers[x][y+i]}.isdisjoint(answers_speicher):
+                        return False
+                    answers_speicher.add(k.answers[x][y+i])
+            else:break
+        return True
     
     def solverl1(k):
             kombinationen = build_table()    
