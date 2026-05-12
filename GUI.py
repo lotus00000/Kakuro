@@ -51,14 +51,10 @@ def userinputs(k):
         justpressed = 0
     if pygame.mouse.get_pressed()[0] == True and justpressed == 0:
         justpressed = 1
-        
-        options, x, y = k.solverl1()
-        if len(options) > 1:
-            print(f"unsure because {options} is long")
-        k.answers[x][y] = next(iter(options))
-
-        print(k.answers[x][y])
-        print(k.legal(x,y))   
+        k.recursiveshell()
+        #opt,x,y=k.solverl1()
+        #k.answers[x][y]=list(opt)[0]
+        #print(k.legal(x,y))   
                 
 running = True
 k = Kakuro(9,10)

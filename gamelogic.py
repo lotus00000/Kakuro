@@ -40,12 +40,12 @@ class Kakuro:
     def getrowvalue(k, direction, x, y):
         if k.contentx[x][y]==0 and k.contenty[x][y] == 0:
             if direction == "right":
-                while k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
+                while x>0 and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
                     x -= 1 
                 if k.contentx[x][y]=="B":return 0 
                 return k.contentx[x][y] 
             if direction == "down":
-                while k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
+                while y>0 and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
                     y -= 1
                 if k.contenty[x][y]=="B":return 0 
                 return k.contenty[x][y]    
@@ -65,7 +65,7 @@ class Kakuro:
             return "Out of bounds"
             
         if direction == "right" and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
-            while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+            while x>0 and k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
                 x -= 1
                 #print("step left")
             for i in range(k.x - x):
@@ -76,7 +76,7 @@ class Kakuro:
 
 
         elif direction == "down" and k.contenty[x][y] == 0 and k.contentx[x][y] == 0:
-            while k.contenty[x][y-1] == 0 and k.contentx[x][y-1] == 0:
+            while y>0 and k.contenty[x][y-1] == 0 and k.contentx[x][y-1] == 0:
                 y -= 1
                 #print("step up")
             for i in range(k.y - y):
@@ -96,7 +96,7 @@ class Kakuro:
         answers_x, answers_y = set(), set()
         kombinationen_x, kombinationen_y = [], []
         
-        while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+        while x>0 and k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
             x -= 1
         for i in range(k.x - x):
             if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0 and k.answers[x+i][y]!= 0:
@@ -104,7 +104,7 @@ class Kakuro:
             else: break
         x = x_speicher
 
-        while k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+        while y>0 and k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
             y -= 1          
         for i in range(k.y - y):
             if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0 and k.answers[x][y+i]!= 0:
@@ -127,27 +127,45 @@ class Kakuro:
     
     def legal(k,x,y):
         answers_speicher = set()
-        while k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+        x_speicher = x
+        y_speicher = y
+        
+        while x>0 and k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
             x -= 1
         for i in range(k.x - x):
             if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0:
                 if k.answers[x+i][y]!= 0:
-                    if len({k.answers[x+i][y]}.intersection(answers_speicher))!=0:#False=={k.answers[x+i][y]}.isdisjoint(answers_speicher):
+                    if k.answers[x+i][y] in answers_speicher:
                         return False
                     answers_speicher.add(k.answers[x+i][y])
             else:break
-    
+
+        x = x_speicher
+        if k.getrowlength("right", x, y)==len(answers_speicher):
+            sum = 0
+            for num in answers_speicher:
+                sum += num
+            if k.getrowvalue("right", x, y)!=sum:return False
+        
         answers_speicher.clear()
-        while k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+
+        while y>0 and k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
             y -= 1          
         for i in range(k.y - y):
-            
             if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0:
                 if k.answers[x][y+i]!= 0:
-                    if len({k.answers[x][y+i]}.intersection(answers_speicher))!=0:#False=={k.answers[x][y+i]}.isdisjoint(answers_speicher):
+                    if k.answers[x][y+i] in answers_speicher:
                         return False
                     answers_speicher.add(k.answers[x][y+i])
             else:break
+
+        y = y_speicher
+        if k.getrowlength("down", x, y)==len(answers_speicher):
+            sum = 0
+            for num in answers_speicher:
+                sum += num
+            if k.getrowvalue("down", x, y)!=sum:return False
+
         return True
     
     def solverl1(k):
@@ -181,12 +199,28 @@ class Kakuro:
             
             
             return num_opt_best,x_best,y_best
-
+    def puzzlecomplete(k):
+        for i in range(k.x):
+            for j in range(k.y):
+                if k.answers[i][j]==0 and k.contentx[i][j]==0 and k.contenty[i][j]==0:
+                    return False
+        return True
     
+    def recursiveshell(k):
+        if k.puzzlecomplete():return True
+            
+        optionen, x, y = k.solverl1()
+        
+        #if not optionen:return False               #nur zur Sicherheit nicht zwingend nötig
 
+        for num in optionen:
+            k.answers[x][y] = num
+            if k.legal(x, y):
+                if k.recursiveshell():
+                    return True
+            k.answers[x][y] = 0
 
-
-
+        return False
 
 
 
@@ -195,6 +229,7 @@ class Kakuro:
     
 
     def bsp(k):
+        k.bfill()
         k.contentx[0][1] = 13
         #k.answers[1][1]=4
         k.contentx[0][2] = 10
@@ -216,7 +251,7 @@ class Kakuro:
         k.contentx[4][1] = "B"
         k.contentx[4][2] = "B"
         k.contentx[8][3] = "B"
-
+        
         k.contenty[1][0] = 5
         k.contenty[2][0] = 12
         k.contenty[3][1] = 27
