@@ -1,11 +1,14 @@
 from gamelogic import Kakuro
-
+import math
+import sys
+sys.setrecursionlimit(5000)
 
 import pygame
 pygame.init()
 fontsize = 25
 font = pygame.font.Font(None, fontsize)
 color = (255, 255, 255)
+colorpressed = (255,0,0)
 GRIDSIZE = 75
 BORDER = 10 #maximal GRIDSIZE/2
 def createKakuro(kakuro):
@@ -13,14 +16,51 @@ def createKakuro(kakuro):
     WIDTH = kakuro.x*GRIDSIZE
     global HEIGHT 
     HEIGHT = kakuro.y*GRIDSIZE
-     
 
+clicked = ()  
+def mouse(k):
+    global clicked
+    if pygame.mouse.get_pressed()[0]==True:
+        x,y = pygame.mouse.get_pos()
+        if x<WIDTH and y<HEIGHT:
+            x,y = math.floor(x/GRIDSIZE), math.floor(y/GRIDSIZE)
+            if k.contenty[x][y] == 0 and k.contentx[x][y] == 0:
+                clicked = (x,y)  
+
+def keypressed(k):
+    if event.type == pygame.KEYDOWN:
+        if pygame.K_1 <= event.key <= pygame.K_9:
+            if clicked != None:
+                k.answers[clicked[0]][clicked[1]] = event.unicode
+        elif pygame.K_s == event.key:
+            wipeanswers(k)
+            k.recursiveshell()
+        elif pygame.K_c == event.key:
+            b = 0   
+            for x in range(len(k.answers)):
+                for y in range(len(k.answers[0])):
+                    if k.answers[x][y]!=0:
+                        if k.legal(x,y)==False:
+                            b = 1
+                            print(f"Stelle ({x}|{y}) ist illegal")
+            if b == 0:
+                print("puzzle is legal")
+        elif pygame.K_SPACE == event.key:
+            k.answers[clicked[0]][clicked[1]] = 0       
+def wipeanswers(k):
+    for x in range(len(k.answers)):
+        for y in range(len(k.answers[0])):
+            k.answers[x][y]=0
 def drawgrid():
     
     for x in range(0, WIDTH, GRIDSIZE):
         for y in range(0, HEIGHT, GRIDSIZE):
             rect = pygame.Rect(x, y, GRIDSIZE, GRIDSIZE)
-            pygame.draw.rect(screen, color, rect, 1)
+            if clicked == (round(x/GRIDSIZE),round(y/GRIDSIZE)):
+                
+                pygame.draw.rect(screen, colorpressed, rect, 1)
+            else:
+                pygame.draw.rect(screen, color, rect, 1)
             
 
 def drawvalue(kakuro):
@@ -69,11 +109,13 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    screen.fill((0, 0, 0))  
+        keypressed(k)
+    screen.fill((0, 0, 0))
+    mouse(k)
+      
     drawgrid()
     drawvalue(k)
-    userinputs(k)
+    #userinputs(k)
     pygame.display.flip()
     
 

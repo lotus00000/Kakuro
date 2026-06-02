@@ -23,6 +23,7 @@ class Kakuro:
         self.contentx = [[default_value for _ in range(y)] for _ in range(x)]
         self.contenty = [[default_value for _ in range(y)] for _ in range(x)]
         self.answers = [[default_value for _ in range(y)] for _ in range(x)]
+        
 
     def bfill(Kakuro):
         for i in range(Kakuro.x):
@@ -144,7 +145,8 @@ class Kakuro:
         if k.getrowlength("right", x, y)==len(answers_speicher):
             sum = 0
             for num in answers_speicher:
-                sum += num
+                #print(num, type(num))
+                sum+=int(num)
             if k.getrowvalue("right", x, y)!=sum:return False
         
         answers_speicher.clear()
@@ -163,7 +165,7 @@ class Kakuro:
         if k.getrowlength("down", x, y)==len(answers_speicher):
             sum = 0
             for num in answers_speicher:
-                sum += num
+                sum += int(num)
             if k.getrowvalue("down", x, y)!=sum:return False
 
         return True
