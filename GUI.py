@@ -8,8 +8,8 @@ import pygame
 pygame.init()
 fontsize = 25
 font = pygame.font.Font(None, fontsize)
-color = (255, 255, 255)
-colorpressed = (255,0,0)
+color = (255, 0, 255)
+colorpressed = (248,212,7)
 GRIDSIZE = 75
 BORDER = 10 #maximal GRIDSIZE/2
 def createKakuro(kakuro):
@@ -55,7 +55,8 @@ def keypressed(k):
             k.generator(random.randint(10000000,99999999))
             #k.constraintcreator()
             k.randomfill()
-            k.sumup() 
+            k.sumup()
+            wipeanswers(k) 
         elif pygame.K_w == event.key:
             wipeanswers(k)     
 def wipeanswers(k):
@@ -111,8 +112,9 @@ running = True
 k = Kakuro(10,10)
 #k.generator()
 #k.constraintcreator()
-options, x, y = k.solverl1()
-print(f"{options}is the best at ({x}|{y})")
+k.loadingscreen()
+#options, x, y = k.solverl1()
+#print(f"{options}is the best at ({x}|{y})")
 
 
 createKakuro(k)

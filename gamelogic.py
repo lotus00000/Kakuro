@@ -286,6 +286,7 @@ class Kakuro:
         
 
     def generator(k, seed = random.randint(100000000000,999999999999) ):
+        print(f"seed:{seed}")
         seed = int(str(seed).replace('0', '1'))
         k.bfill()
         digits = []
@@ -361,7 +362,7 @@ class Kakuro:
                     else:
                         k.contentx[x-1][y]=0
                         k.contenty[x-1][y]=0
-                        
+                       
     def layoutlegal(k):
         for i in range(k.x):
             for j in range(k.y):
@@ -462,7 +463,7 @@ class Kakuro:
                     sum = 0
                     for num in answers_speicher:
                         sum+=int(num)
-                        print(sum)
+                        
                     k.contentx[x-1][y] = sum
                     x = x_speicher
                     answers_speicher.clear()
@@ -506,7 +507,15 @@ class Kakuro:
                         return False
                     answers_speicher.add(k.answers[x][y+i])
             else:break
-        return True             
+        return True
+    def loadingscreen(k):
+        k.answers[2][4] = "K"
+        k.answers[3][4] = "A"
+        k.answers[4][4] = "K"
+        k.answers[5][4] = "U"            
+        k.answers[6][4] = "R"
+        k.answers[7][4] = "O"
+       
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
 #k = Kakuro(10,10)
