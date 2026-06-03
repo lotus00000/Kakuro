@@ -1,6 +1,7 @@
 from gamelogic import Kakuro
 import math
 import sys
+import random
 sys.setrecursionlimit(5000)
 
 import pygame
@@ -46,7 +47,11 @@ def keypressed(k):
             if b == 0:
                 print("puzzle is legal")
         elif pygame.K_SPACE == event.key:
-            k.answers[clicked[0]][clicked[1]] = 0       
+            k.answers[clicked[0]][clicked[1]] = 0 
+        elif pygame.K_r == event.key:
+            wipeanswers(k)
+            k.bfill()
+            k.generator(random.randint(100000000000,999999999999))      
 def wipeanswers(k):
     for x in range(len(k.answers)):
         for y in range(len(k.answers[0])):
@@ -97,8 +102,8 @@ def userinputs(k):
         #print(k.legal(x,y))   
                 
 running = True
-k = Kakuro(9,10)
-k.bsp()
+k = Kakuro(10,10)
+k.generator()
 options, x, y = k.solverl1()
 print(f"{options}is the best at ({x}|{y})")
 #print(k.getrowvalue("down",6,7))

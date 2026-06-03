@@ -1,7 +1,7 @@
 from itertools import combinations
 import copy
-
-
+import random
+import math
 
 def build_table():
         table = {}
@@ -27,12 +27,17 @@ class Kakuro:
 
     def bfill(Kakuro):
         for i in range(Kakuro.x):
-            Kakuro.contentx[i][0] = "B"
-            Kakuro.contenty[i][0] = "B"  
+            for j in range(Kakuro.y):
+                Kakuro.contentx[i][j] = "B"
+                Kakuro.contenty[i][j] = "B"  
+    def bfill2(Kakuro):
+        
         for j in range(Kakuro.y):
             Kakuro.contentx[0][j] = "B"
-            Kakuro.contenty[0][j] = "B"     
-  
+            Kakuro.contenty[0][j] = "B"    
+        for i in range(Kakuro.x):       
+            Kakuro.contentx[i][0] = "B"
+            Kakuro.contenty[i][0] = "B"
          
   
 
@@ -277,6 +282,116 @@ class Kakuro:
         k.contenty[4][9] = "B"
         
 
+    def generator(k, seed = random.randint(100000000000,999999999999) ):
+        seed = int(str(seed).replace('0', '1'))
+        k.bfill()
+        digits = []
+        seedkoordinaten = []
+
+        while seed > 0:
+            digits.append(seed % 10)
+            seed //= 10
+        digits.reverse()
+
+        i = 0
+        for num in digits:
+            #print(num)
+            if i == 1:
+                y = num
+                k.contentx[x][y] = 0
+                k.contenty[x][y] = 0
+                seedkoordinaten.append((x,y))
+                
+                i = 0
+            else:
+                x = num
+                i = 1
+        k.symmetry()
+        k.legalize()
+        
+        for start in seedkoordinaten:
+            sx, sy = start
+            for goal in seedkoordinaten:
+                sx, sy = x, y
+                p = 0 
+                while not k.pathexists(start,goal) and  p<100:
+                    dx = goal[0] - sx
+                    dy = goal[1] - sy
+                    if abs(dx)>abs(dy):
+                        step_x = 1 if dx > 0 else -1
+                        step_y = 0
+                    else:
+                        step_x = 0
+                        step_y = 1 if dy > 0 else -1
+                    nx, ny = sx + step_x, sy + step_y
+                    if 0 <= nx < len(k.contentx) and 0 <= ny < len(k.contentx[0]):
+                        k.contentx[nx][ny] = 0
+                        k.contenty[nx][ny] = 0
+                    p += 1
+                    sx, sy = nx, ny
+            k.bfill2()
+            k.legalize()
+            
+    def symmetry(k):
+        for y in range(len(k.contentx[0])):
+            for x in range (math.ceil(len(k.contentx)/2)):
+                if k.contentx[x+1][y] == 0 or "B":
+                    k.contentx[len(k.contentx)-x-1][y] = k.contentx[x+1][y]
+                    k.contentx[len(k.contenty)-x-1][y] = k.contenty[x+1][y]
+
+    def legalize(k):
+        legal = False
+        while legal == False:
+            legal, x, y, direction = k.layoutlegal()
+            if legal == False:
+                if direction == "down":
+                    if y+1 < len(k.contenty[0]):
+                        k.contentx[x][y+1]=0
+                        k.contenty[x][y+1]=0
+                    else:
+                        k.contentx[x][y-1]=0
+                        k.contenty[x][y-1]=0
+                else:
+                    if x+1 < len(k.contenty):
+                        k.contentx[x+1][y]=0
+                        k.contenty[x+1][y]=0
+                    else:
+                        k.contentx[x-1][y]=0
+                        k.contenty[x-1][y]=0
+                        
+    def layoutlegal(k):
+        for i in range(k.x):
+            for j in range(k.y):
+                if k.contentx[i][j]==0:
+                    if k.getrowlength("down",i,j) == 1:
+                        return False, i, j, "down"
+                    if k.getrowlength("right",i,j) == 1:
+                        return False, i, j, "right"
+        return True, None, None, None
+
+    def pathexists(k, start, goal):
+        sx, sy = start
+        gx, gy = goal
+        zeilen = k.y
+        reihen = k.x
+
+        if k.contentx[sx][sy]=="B" or k.contentx[gx][gy]=="B":
+            return False
+
+        checked = [[False for _ in range(reihen)] for _ in range(zeilen)]
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        def dfs(x, y):
+            if (x, y) == (gx, gy):
+                return True
+            checked[x][y] = True
+            for d1, d2 in directions:
+                new_x, new_y = x + d1, y + d2
+                if 0 <= new_x < reihen and 0 <= new_y < zeilen and not checked[new_x][new_y]and k.contentx[new_x][new_y]==0:
+                    if dfs(new_x,new_y):
+                        return True
+            return False
+        return dfs(sx,sy)
 
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
