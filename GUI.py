@@ -36,6 +36,7 @@ def keypressed(k):
         elif pygame.K_s == event.key:
             wipeanswers(k)
             k.recursiveshell()
+            print(k.recursiveshell())
         elif pygame.K_c == event.key:
             b = 0   
             for x in range(len(k.answers)):
@@ -51,7 +52,12 @@ def keypressed(k):
         elif pygame.K_r == event.key:
             wipeanswers(k)
             k.bfill()
-            k.generator(random.randint(100000000000,999999999999))      
+            k.generator(random.randint(10000000,99999999))
+            #k.constraintcreator()
+            k.randomfill()
+            k.sumup() 
+        elif pygame.K_w == event.key:
+            wipeanswers(k)     
 def wipeanswers(k):
     for x in range(len(k.answers)):
         for y in range(len(k.answers[0])):
@@ -103,12 +109,14 @@ def userinputs(k):
                 
 running = True
 k = Kakuro(10,10)
-k.generator()
+#k.generator()
+#k.constraintcreator()
 options, x, y = k.solverl1()
 print(f"{options}is the best at ({x}|{y})")
-#print(k.getrowvalue("down",6,7))
+
 
 createKakuro(k)
+#k.bsp()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 while running:
     for event in pygame.event.get():

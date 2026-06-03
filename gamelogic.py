@@ -174,30 +174,33 @@ class Kakuro:
             if k.getrowvalue("down", x, y)!=sum:return False
 
         return True
+    def solver0(k,x,y):
+        kombinationen = build_table()
+        num_opt = set()
+        num_opt2 = set()
+        kombinationen_x, kombinationen_y = k.refine(x,y,kombinationen)
+        for optionen in kombinationen_x:
+            for num in optionen:
+                num_opt.add(num)
+        
+        for optionen in kombinationen_y:
+            for num in optionen:
+                num_opt2.add(num)
+        num_opt = num_opt.intersection(num_opt2)
+        return num_opt
     
     def solverl1(k):
-            kombinationen = build_table()    
+                
             num_opt_best = {1,2,3,4,5,6,7,8,9}
-            
             x_best = 0
             y_best = 0
             for x in range(k.x):
                 for y in range(k.y):
-                    num_opt = set()
-                    num_opt2 = set()
+                    
                     
                     if(k.answers[x][y]==0 and k.contentx[x][y]==0 and k.contenty[x][y]==0 and 2<k.getrowvalue("right",x,y) and 0<k.getrowlength("right",x,y) and 2<k.getrowvalue("down",x,y) and 0<k.getrowlength("down",x,y)):
                         
-                        kombinationen_x, kombinationen_y = k.refine(x,y,kombinationen)
-                        for optionen in kombinationen_x:
-                            for num in optionen:
-                                num_opt.add(num)
-                        
-                        for optionen in kombinationen_y:
-                            for num in optionen:
-                                num_opt2.add(num)
-                        
-                        num_opt = num_opt.intersection(num_opt2)
+                        num_opt = k.solver0(x,y)
                         if len(num_opt_best)>len(num_opt) and len(num_opt) != 0:
                             num_opt_best = num_opt
                             x_best = x
@@ -236,7 +239,7 @@ class Kakuro:
     
 
     def bsp(k):
-        k.bfill()
+        k.bfill2()
         k.contentx[0][1] = 13
         #k.answers[1][1]=4
         k.contentx[0][2] = 10
@@ -392,7 +395,118 @@ class Kakuro:
                         return True
             return False
         return dfs(sx,sy)
+    
+    def constraintcreator(k):
+        
+        for x in range(len(k.contentx)):
+            for y in range(len(k.contentx[0])):
+                if k.contentx[x][y] == 0 and k.answers[x][y] == 0:
+                    k.tryout(x,y)
 
+    def tryout(k,x,y):
+        table = build_table()
+        len_x = k.getrowlength("right",x,y)
+        len_y = k.getrowlength("down",x,y)
+        val_x = []
+        val_y = []
+        for key, value in table.items():
+            if key[0] == len_x:
+                val_x.append(key[1])
+        
+            if key[0] == len_y:
+                val_y.append(key[1])    
+        
+        for i in val_x:
+            for j in val_y:
+                x_1 = x
+                y_1 = y
+                while x>0 and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
+                    x -= 1
+                if k.contentx[x][y]== "B":
+                    k.contentx[x][y]=i
+                x = x_1
+                while y>0 and k.contentx[x][y] == 0 and k.contenty[x][y] == 0:
+                    y -= 1
+                if k.contenty[x][y]== "B":
+                    k.contenty[x][y]=j
+                y = y_1
+                
+    def randomfill(k):
+        for x in range(k.x):
+            for y in range(k.y):
+                
+                if k.contentx[x][y]==0 and k.contenty[x][y]==0 and k.answers[x][y]==0:
+                    legal = False
+                    i = 0
+                    while legal == False:
+                        i+=1
+                        k.answers[x][y]=random.randint(1,9) 
+                        legal = k.checklegal2(x,y)
+                        
+                        if i == 300:break
+                        
+
+    def sumup(k):
+        for x in range(k.x):
+            for y in range(k.y):
+                
+                answers_speicher = set()
+                x_speicher = x
+                if k.answers[x][y]!=0:
+                    while x>0 and k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+                        x -= 1
+                    for i in range(k.x - x):
+                        if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0:
+                            answers_speicher.add(k.answers[x+i][y])
+                        else:break
+                    sum = 0
+                    for num in answers_speicher:
+                        sum+=int(num)
+                        print(sum)
+                    k.contentx[x-1][y] = sum
+                    x = x_speicher
+                    answers_speicher.clear()
+                
+                    while y>0 and k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+                        y -= 1          
+                    for i in range(k.y - y):
+                        if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0:
+                                answers_speicher.add(k.answers[x][y+i])
+                        else:break
+                    sum = 0
+                    for num in answers_speicher:
+                        sum += int(num)
+                    k.contenty[x][y-1] = sum
+                    
+
+
+    def checklegal2(k,x,y):
+        answers_speicher = set()
+        x_speicher = x
+        
+        while x>0 and k.contentx[x-1][y] == 0 and k.contenty[x-1][y] == 0:
+            x -= 1
+        for i in range(k.x - x):
+            if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0:
+                if k.answers[x+i][y]!= 0:
+                    if k.answers[x+i][y] in answers_speicher:
+                        return False
+                    answers_speicher.add(k.answers[x+i][y])
+            else:break
+
+        x = x_speicher  
+        answers_speicher.clear()
+
+        while y>0 and k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
+            y -= 1          
+        for i in range(k.y - y):
+            if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0:
+                if k.answers[x][y+i]!= 0:
+                    if k.answers[x][y+i] in answers_speicher:
+                        return False
+                    answers_speicher.add(k.answers[x][y+i])
+            else:break
+        return True             
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
 #k = Kakuro(10,10)
