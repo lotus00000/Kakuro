@@ -3,6 +3,8 @@ import copy
 import random
 import math
 
+
+
 def build_table():
         table = {}
         digits = range(1, 10)
@@ -17,9 +19,13 @@ def build_table():
 
 class Kakuro:
     
-    def __init__(self, x, y, default_value=0):
+    def __init__(self, x, y, nodeslimit = 30, min_puzzlesize = 15, seedlength = 4,internalnodelimit = 3, default_value=0):
         self.x = x
         self.y = y
+        self.internalnodelimit = internalnodelimit
+        self.nodeslimit = nodeslimit
+        self.min_puzzlesize = min_puzzlesize
+        self.seedlength = seedlength*2
         self.contentx = [[default_value for _ in range(y)] for _ in range(x)]
         self.contenty = [[default_value for _ in range(y)] for _ in range(x)]
         self.answers = [[default_value for _ in range(y)] for _ in range(x)]
@@ -216,21 +222,28 @@ class Kakuro:
                     return False
         return True
     
-    def recursiveshell(k):
-        if k.puzzlecomplete():return True
-            
+    def recursiveshell(k,nodesvisited = 0):
+        if k.puzzlecomplete():return True, nodesvisited  
         optionen, x, y = k.solverl1()
-        
-        #if not optionen:return False               #nur zur Sicherheit nicht zwingend nötig
-
+        if len(optionen)>k.internalnodelimit:
+            return False, nodesvisited
         for num in optionen:
+            
+            if nodesvisited > k.nodeslimit:
+                return False, nodesvisited
+            nodesvisited += 1
+            
             k.answers[x][y] = num
+
             if k.legal(x, y):
-                if k.recursiveshell():
-                    return True
+
+                state, nodesvisited = k.recursiveshell(nodesvisited)
+                if state:
+                    return True, nodesvisited
+                
             k.answers[x][y] = 0
 
-        return False
+        return False, nodesvisited
 
 
 
@@ -444,7 +457,9 @@ class Kakuro:
                         k.answers[x][y]=random.randint(1,9) 
                         legal = k.checklegal2(x,y)
                         
-                        if i == 300:break
+                        if i == 100:
+                            k.wipeanswers()
+                            k.randomfill()
                         
 
     def sumup(k):
@@ -480,6 +495,15 @@ class Kakuro:
                     k.contenty[x][y-1] = sum
                     
 
+    def checksize(k):
+        i = 0
+        for x in range(k.x):
+            for y in range(k.y):
+                if k.contentx[x][y]==0 and  k.contentx[x][y]==0:
+                    i += 1
+        if i<k.min_puzzlesize:
+            return False, i
+        return True, i
 
     def checklegal2(k,x,y):
         answers_speicher = set()
@@ -515,7 +539,10 @@ class Kakuro:
         k.answers[5][4] = "U"            
         k.answers[6][4] = "R"
         k.answers[7][4] = "O"
-       
+    def wipeanswers(k):
+        for x in range(len(k.answers)):
+            for y in range(len(k.answers[0])):
+                k.answers[x][y]=0   
     #https://stackoverflow.com/questions/61448326/generate-a-dictionary-of-all-possible-kakuro-solutions
         
 #k = Kakuro(10,10)
