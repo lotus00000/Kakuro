@@ -20,7 +20,7 @@ BORDER = 10 #maximal GRIDSIZE/2
 #-------------------------------
     
     #AUTHOR ALEXANDER PETRI
-    
+
     #USER MANUAL
     #BELOW ALL COMMANDS ARE LISTED
     # C - CHECK A PUZZLES LEGALITY
@@ -195,9 +195,9 @@ def colorpicker():
         background = (0,0,0)
         colorpressed = (255,0,0)
     if clicked2 == (2,8):
-        background = (200,200,200)
-        color = (0,0,0)
-        colorpressed = (255,0,0)
+        background = (55,55,55)
+        color = (255,153,0)
+        colorpressed = (228,69,69)
     if clicked2 == (3,8):
         background = (50,52,55)
         color = (202,71,84)
@@ -208,7 +208,7 @@ def colorpicker():
         colorpressed = (248,212,7)  
     if clicked2 == (5,8):
         background = (0,0,0)
-        color = (255,0,255)
+        color = (151,47,255)
         colorpressed = (248,212,7)
 
 
@@ -229,7 +229,7 @@ def drawgridmenu():
                 
                 pygame.draw.rect(screen, (55,55,55), rect)
                 if x/GRIDSIZE ==5 and y/GRIDSIZE == 8 :
-                    pygame.draw.rect(screen, (255,0,255), rect)
+                    pygame.draw.rect(screen, (151,47,255), rect)
                     rect = pygame.Rect(x+BORDER, y+BORDER, GRIDSIZE-2*BORDER, GRIDSIZE-2*BORDER)
                     pygame.draw.rect(screen, (0,0,0), rect)
                 if x/GRIDSIZE ==4 and y/GRIDSIZE == 8 :
@@ -241,9 +241,9 @@ def drawgridmenu():
                     rect = pygame.Rect(x+BORDER, y+BORDER, GRIDSIZE-2*BORDER, GRIDSIZE-2*BORDER)
                     pygame.draw.rect(screen, (50,52,55), rect)
                 if x/GRIDSIZE ==2 and y/GRIDSIZE == 8 :
-                    pygame.draw.rect(screen, (0,0,0), rect)
+                    pygame.draw.rect(screen, (255,153,0), rect)
                     rect = pygame.Rect(x+BORDER, y+BORDER, GRIDSIZE-2*BORDER, GRIDSIZE-2*BORDER)
-                    pygame.draw.rect(screen, (200,200,200), rect)
+                    pygame.draw.rect(screen, (55,55,55), rect)
                 if x/GRIDSIZE ==1 and y/GRIDSIZE == 8 :
                     pygame.draw.rect(screen, (255,255,255), rect)
                     rect = pygame.Rect(x+BORDER, y+BORDER, GRIDSIZE-2*BORDER, GRIDSIZE-2*BORDER)
