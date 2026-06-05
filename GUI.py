@@ -1,4 +1,4 @@
-from gamelogic import Kakuro
+from gamelogic import *
 import math
 import sys
 import random
@@ -17,9 +17,10 @@ color = (255,255,255)
 colorpressed = (255,0,0)
 GRIDSIZE = 75
 BORDER = 10 #maximal GRIDSIZE/2
+state3 = True #entscheidet ob es am Anfang ein eindeutig lösbares Feld zum einstieg geben muss, False bedeutet es ist eindeutig
 #-------------------------------
     
-    #AUTHOR ALEXANDER PETRI
+    #AUTHOR: ALEXANDER PETRI
 
     #USER MANUAL
     #BELOW ALL COMMANDS ARE LISTED
@@ -28,10 +29,11 @@ BORDER = 10 #maximal GRIDSIZE/2
     # Q - GET A HINT
     # W - WIPE ALL ANSWERS
     # S - SOLVE PUZZLE
+    # SPACE - REMOVE SINGLE ANSWER
 
 #-------------------------------
 
-#k = Kakuro(10,10,10,0,3,1)
+k = Kakuro(10,10,30,18,4,1)
 
 #-------------------------------
 #Rechenaufwändig jedoch einfach lösbare Puzzel, die schaffen auch Sie
@@ -50,7 +52,7 @@ BORDER = 10 #maximal GRIDSIZE/2
 #-------------------------------
 #superschnell, extrem, menschlich sogut wie unlösbar
 
-k = Kakuro(10,10,40,0,4,10)
+#k = Kakuro(10,10,100,0,4,10)
 
 #-------------------------------
 #ausgelegt für schnelle generation "Augenblick"
@@ -83,16 +85,21 @@ def timer():
 
 def keypressed(k):
     global clicked
+
     if event.type == pygame.KEYDOWN:
         if pygame.K_1 <= event.key <= pygame.K_9:
             if clicked != None:
                 k.answers[clicked[0]][clicked[1]] = event.unicode
+
         elif pygame.K_s == event.key:
             k.wipeanswers()
             k.recursiveshell()
+
         elif pygame.K_q == event.key:
             options, x, y = k.solverl1()
-            pygame.display.set_caption(f"{options}is the best at ({x}|{y})")
+            if x+y!=0:
+                clicked = x,y
+                pygame.display.set_caption(f"{options}is the best at marked")#({x}|{y})")
 
         elif pygame.K_c == event.key:
             b = 0   
@@ -104,32 +111,47 @@ def keypressed(k):
                             print(f"Stelle ({x}|{y}) ist illegal")
             if b == 0:
                 pygame.display.set_caption("puzzle is legal")
+            else:
+                pygame.display.set_caption("puzzle is illegal")
+
         elif pygame.K_SPACE == event.key:
             k.answers[clicked[0]][clicked[1]] = 0 
-        elif pygame.K_r == event.key:
-            pygame.display.set_caption("GENERATING...")
-            
-            state2 = False
-            while not state2:
-                state = False
-                while not state:
 
-                    k.wipeanswers()
-                    k.generator(random.randint(10**(k.seedlength-1),10**k.seedlength-1))
-                    k.randomfill()
-                    k.sumup()
-                    k.wipeanswers()
-                    state, _ = k.recursiveshell()
-                    print(state, _)
-                    k.wipeanswers() 
-                state2, _ = k.checksize()
-                print(f"-----{state2} {_}-----")
-            pygame.display.set_caption("")
-            #k.answers[0][0]="?"
+        elif pygame.K_r == event.key:
+            generatepuzzle(k)
             
-            clicked = ()
+            
         elif pygame.K_w == event.key:
             k.wipeanswers()     
+def generatepuzzle(k):
+    
+    pygame.display.set_caption("GENERATING...")
+    global state3 
+    global clicked
+    state4 = False
+    while not state4:
+        state4 = state3
+        state2 = False
+        while not state2:
+            state = False
+            while not state:
+                seed = random.randint(10**(k.seedlength-1),10**k.seedlength-1)
+                k.wipeanswers()
+                k.generator(seed)
+                k.randomfill()
+                k.sumup()
+                k.wipeanswers()
+                state, _ = k.recursiveshell()
+                
+                k.wipeanswers() 
+            state2, _ = k.checksize()
+            
+        options, x, y = k.solverl1()
+        if len(options)==1: state4=True
+    pygame.display.set_caption(str(seed))
+    print(str(seed))
+    
+    clicked = ()
 
 def drawgrid():
     for x in range(0, WIDTH, GRIDSIZE):
@@ -267,7 +289,6 @@ def drawgridmenu():
 
 k.loadingscreen()
 createKakuro(k)
-
 
 running = True
 screen = pygame.display.set_mode((WIDTH, HEIGHT))

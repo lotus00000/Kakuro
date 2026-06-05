@@ -44,11 +44,7 @@ class Kakuro:
         for i in range(Kakuro.x):       
             Kakuro.contentx[i][0] = "B"
             Kakuro.contenty[i][0] = "B"
-         
-  
-
-   
-    
+             
     def getrowvalue(k, direction, x, y):
         if k.contentx[x][y]==0 and k.contenty[x][y] == 0:
             if direction == "right":
@@ -112,29 +108,35 @@ class Kakuro:
             x -= 1
         for i in range(k.x - x):
             if k.contentx[x+i][y] == 0 and k.contenty[x+i][y] == 0 and k.answers[x+i][y]!= 0:
-                answers_x.add(k.answers[x+i][y])
-            else: break
+                answers_x.add(int(k.answers[x+i][y]))
+            elif k.contentx[x+i][y] != 0 or k.contenty[x+i][y] != 0: break
         x = x_speicher
-
+        
         while y>0 and k.contentx[x][y-1] == 0 and k.contenty[x][y-1] == 0:
             y -= 1          
         for i in range(k.y - y):
             if k.contenty[x][y+i] == 0 and k.contentx[x][y+i] == 0 and k.answers[x][y+i]!= 0:
-                answers_y.add(k.answers[x][y+i])
-            else: break
+                answers_y.add(int(k.answers[x][y+i]))
+            elif  k.contenty[x][y+i] != 0 or k.contentx[x][y+i] != 0: break
         y = y_speicher
-
+        #print("Antworten", answers_x,type(answers_x), answers_y, type(answers_y))
         for optionen in table[k.getrowlength("right",x,y), k.getrowvalue("right",x,y)]:
             if answers_x.issubset(optionen):
-                opt = copy.deepcopy(optionen)                            
-                opt.difference_update(answers_x)                
+                #print(f"{answers_x} is subset of {optionen}")
+                opt = optionen - answers_x
+                #print(opt)               
                 kombinationen_x.append(opt)
         
         for optionen in table[k.getrowlength("down",x,y), k.getrowvalue("down",x,y)]:
             if answers_y.issubset(optionen): 
-                opt_1 = copy.deepcopy(optionen)                                                   
-                opt_1.difference_update(answers_y)       
-                kombinationen_y.append(opt_1)
+                #print(f"{answers_y} is subset of {optionen}")
+                opt = optionen - answers_y
+                               
+                kombinationen_y.append(opt)
+        #print(kombinationen_x, "-------------", kombinationen_y)   
+        # 
+        # pain in the ass debugging int( ) typecast missing
+        #      
         return kombinationen_x,kombinationen_y
     
     def legal(k,x,y):
@@ -208,6 +210,7 @@ class Kakuro:
                         
                         num_opt = k.solver0(x,y)
                         if len(num_opt_best)>len(num_opt) and len(num_opt) != 0:
+                            
                             num_opt_best = num_opt
                             x_best = x
                             y_best = y
@@ -299,7 +302,7 @@ class Kakuro:
         
 
     def generator(k, seed = random.randint(100000000000,999999999999) ):
-        print(f"seed:{seed}")
+        #print(f"seed:{seed}")
         seed = int(str(seed).replace('0', '1'))
         k.bfill()
         digits = []
@@ -329,7 +332,7 @@ class Kakuro:
         for start in seedkoordinaten:
             sx, sy = start
             for goal in seedkoordinaten:
-                sx, sy = x, y
+                #sx, sy = x, y
                 p = 0 
                 while not k.pathexists(start,goal) and  p<100:
                     dx = goal[0] - sx
@@ -499,7 +502,7 @@ class Kakuro:
         i = 0
         for x in range(k.x):
             for y in range(k.y):
-                if k.contentx[x][y]==0 and  k.contentx[x][y]==0:
+                if k.contentx[x][y]==0 and  k.contentx[x][y]==0 and k.answers[x][y]==0:
                     i += 1
         if i<k.min_puzzlesize:
             return False, i
