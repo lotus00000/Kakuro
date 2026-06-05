@@ -10,6 +10,7 @@ pygame.init()
 background = (0,0,0)
 fontsize = 25
 font = pygame.font.Font(None, fontsize)
+secc = False
 pygame.display.set_caption("-------------------------------------------------------------PRESS R TO START------------------------------------")
 blank = pygame.Surface((32, 32), pygame.SRCALPHA)
 pygame.display.set_icon(blank)
@@ -18,6 +19,7 @@ colorpressed = (255,0,0)
 GRIDSIZE = 75
 BORDER = 10 #maximal GRIDSIZE/2
 state3 = True #entscheidet ob es am Anfang ein eindeutig lösbares Feld zum einstieg geben muss, False bedeutet es ist eindeutig
+
 #-------------------------------
     
     #AUTHOR: ALEXANDER PETRI
@@ -33,7 +35,7 @@ state3 = True #entscheidet ob es am Anfang ein eindeutig lösbares Feld zum eins
 
 #-------------------------------
 
-k = Kakuro(10,10,30,18,4,1)
+#k = Kakuro(10,10,30,18,4,1)
 
 #-------------------------------
 #Rechenaufwändig jedoch einfach lösbare Puzzel, die schaffen auch Sie
@@ -52,7 +54,7 @@ k = Kakuro(10,10,30,18,4,1)
 #-------------------------------
 #superschnell, extrem, menschlich sogut wie unlösbar
 
-#k = Kakuro(10,10,100,0,4,10)
+k = Kakuro(10,10,100,0,4,10)
 
 #-------------------------------
 #ausgelegt für schnelle generation "Augenblick"
@@ -85,6 +87,7 @@ def timer():
 
 def keypressed(k):
     global clicked
+    global secc
 
     if event.type == pygame.KEYDOWN:
         if pygame.K_1 <= event.key <= pygame.K_9:
@@ -97,10 +100,13 @@ def keypressed(k):
 
         elif pygame.K_q == event.key:
             options, x, y = k.solverl1()
-            if x+y!=0:
+            if x+y!=0 and secc==False:
                 clicked = x,y
-                pygame.display.set_caption(f"{options}is the best at marked")#({x}|{y})")
-
+                secc = True
+                #pygame.display.set_caption(f"{options}is the best at marked")#({x}|{y})")
+            elif x+y!=0 and secc==True:
+                k.answers[x][y] = next(iter(options))
+                secc = False
         elif pygame.K_c == event.key:
             b = 0   
             for x in range(len(k.answers)):
