@@ -35,7 +35,7 @@ state3 = True #entscheidet ob es am Anfang ein eindeutig lösbares Feld zum eins
 
 #-------------------------------
 
-#k = Kakuro(10,10,30,18,4,1)
+k = Kakuro(10,10,50,24,4,1)
 
 #-------------------------------
 #Rechenaufwändig jedoch einfach lösbare Puzzel, die schaffen auch Sie
@@ -54,7 +54,7 @@ state3 = True #entscheidet ob es am Anfang ein eindeutig lösbares Feld zum eins
 #-------------------------------
 #superschnell, extrem, menschlich sogut wie unlösbar
 
-k = Kakuro(10,10,100,0,4,10)
+#k = Kakuro(10,10,100,0,4,10)
 
 #-------------------------------
 #ausgelegt für schnelle generation "Augenblick"
@@ -93,6 +93,7 @@ def keypressed(k):
         if pygame.K_1 <= event.key <= pygame.K_9:
             if clicked != None:
                 k.answers[clicked[0]][clicked[1]] = event.unicode
+                secc = False
 
         elif pygame.K_s == event.key:
             k.wipeanswers()
